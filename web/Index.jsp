@@ -206,8 +206,8 @@
                 <form id="LoginForm" method="post" action="DoAuthenticate">
                     <h1 class="mb-4">QuickQuiz</h1>
                     <div class="form-floating mb-3">
-                        <input type="email" name="email" class="form-control" id="email" placeholder="" autocomplete="off">
-                        <label for="email">Email</label>
+                        <input type="text" name="loginIdentifier" class="form-control" id="email" placeholder="" autocomplete="off">
+                        <label for="email">Email or Username</label>
                     </div>
 
                     <div class="form-floating mb-3">

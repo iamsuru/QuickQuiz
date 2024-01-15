@@ -10,6 +10,7 @@ import jakarta.servlet.http.*;
 import java.io.*;
 import com.mongodb.client.result.*;
 import org.bson.Document;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class RegisterServlet extends HttpServlet {
 
@@ -21,8 +22,11 @@ public class RegisterServlet extends HttpServlet {
             String username = req.getParameter("username");
             String gender = req.getParameter("gender");
             String password = req.getParameter("password");
-            String confirm_password = req.getParameter("confirm_password");
             MongoDatabase database = DatabaseConnector.getDatabase();
+            
+            String salt = BCrypt.gensalt();
+            String hashPassword = BCrypt.hashpw(password, salt);
+            
             MongoCollection<Document> users = database.getCollection("user");
 
             users.createIndex(new Document("email", 1), new IndexOptions().unique(true));
@@ -33,7 +37,7 @@ public class RegisterServlet extends HttpServlet {
             newUser.setEmail(email);
             newUser.setUsername(username);
             newUser.setGender(gender);
-            newUser.setPassword(password);
+            newUser.setPassword(hashPassword);
 
             Document userDocument = new Document()
                     .append("name", newUser.getName())
