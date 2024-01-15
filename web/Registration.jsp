@@ -5,10 +5,10 @@
 
     <head>
         <meta charset="UTF-8">
+        <link rel="shortcut icon" href="./images/favicon.png" type="image/x-icon">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Registration - QuickQuiz</title>
         <link rel="stylesheet" href="./stylesheet/bootstrap.css">
-        <link rel="shortcut icon" href="./images/favicon.png" type="image/x-icon">
         <style>
             body {
                 background-color: rgb(25, 24, 51) !important;
@@ -52,7 +52,7 @@
 
             @font-face {
                 font-family: "Lemon-Regular";
-                src: url("../fonts/Lemon-Regular.ttf");
+                src: url("./fonts/Lemon-Regular.ttf");
             }
 
             h1 {
@@ -107,20 +107,20 @@
     <body>
         <div class="container">
             <div class="form-container">
-                <form>
+                <form id="registrationForm" method="POST" action="RegisterServlet" >
                     <h1 class="mb-4">QuickQuiz</h1>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="name" placeholder="" autocomplete="off" required>
+                        <input type="text" name="name" class="form-control" id="name" placeholder="" autocomplete="off" required>
                         <label for="name">Name</label>
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="email" placeholder="" autocomplete="off" required>
+                        <input type="email" name="email" class="form-control" id="email" placeholder="" autocomplete="off" required>
                         <label for="email">Email</label>
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="username" placeholder="" autocomplete="off" required>
+                        <input type="text" name="username" class="form-control" id="username" placeholder="" autocomplete="off" required>
                         <label for="username">Username</label>
                     </div>
 
@@ -143,19 +143,19 @@
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input type="password" class="form-control" id="password" placeholder="" autocomplete="off"
+                        <input type="password" name="password" class="form-control" id="password" placeholder="" autocomplete="off"
                                required>
                         <label for="password">Create Password</label>
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input type="password" class="form-control" id="confirm_password" placeholder="" autocomplete="off"
+                        <input type="password" name="confirm_password" class="form-control" id="confirm_password" placeholder="" autocomplete="off"
                                required>
                         <label for="confirm_password">Repeat Password</label>
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button class="btn btn-outline-success" type="button">Register yourself</button>
+                        <button class="btn btn-outline-success" type="submit">Register yourself</button>
                     </div>
                 </form>
             </div>
@@ -225,6 +225,49 @@
                 </svg>
             </div>
         </div>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+        <script>
+            $(document).ready(function () {
+                function checkPasswordEquality() {
+                    var password = $('#password').val();
+                    var confirmPassword = $('#confirm_password').val();
+
+                    if (password !== confirmPassword) {
+                        // Passwords do not match, add red border to confirm password field
+                        $('#confirm_password').css('border', '2px solid red');
+                    } else {
+                        // Passwords match, remove red border from confirm password field
+                        $('#confirm_password').css('border', '2px solid green');
+                    }
+                }
+                $('#confirm_password').on('input', checkPasswordEquality);
+
+                $('#registrationForm').submit(function (event) {
+                    event.preventDefault();
+                    var formData = $(this).serialize();
+                    $.ajax({
+                        type: 'POST',
+                        url: "RegisterServlet",
+                        data: formData,
+                        success: function (data, textStatus, jqXHR) {
+                            if (jqXHR.status === 200) {
+                                alert(data);
+                                window.location = "/QuickQuiz";
+                            } else {
+                                alert(data);
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            if (jqXHR.status === 400) {
+                                alert(jqXHR.responseText);
+                            } else if (jqXHR.status === 500) {
+                                alert(jqXHR.responseText);
+                            }
+                        }
+                    })
+                })
+            })
+        </script>
     </body>
 
 </html>

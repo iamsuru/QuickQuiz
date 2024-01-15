@@ -59,7 +59,7 @@
 
             @font-face {
                 font-family: "Lemon-Regular";
-                src: url("../fonts/Lemon-Regular.ttf");
+                src: url("./fonts/Lemon-Regular.ttf");
             }
 
             h1 {
@@ -236,20 +236,23 @@
                     var formData = $(this).serialize(); // Serialize form data
                     $.ajax({
                         type: 'POST',
-                        url: 'DoAuthenticate',
+                        url: 'LoginServlet',
                         data: formData,
                         success: function (data, textStatus, jqXHR) {
                             if (jqXHR.status === 200) {
+                                alert(data);
                                 window.location = "home-panel";
                             } else {
-                                alert(data);
+                                alert("Unexpected error " + data);
                             }
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
-                            if (jqXHR.status === 400 || jqXHR.status === 401) {
-                                alert(jqXHR.responseText); // Display error message received from the server
-                            } else {
-                                alert(textStatus);
+                            if (jqXHR.status === 401) {
+                                alert(jqXHR.responseText)
+                            } else if (jqXHR.status === 404) {
+                                alert(jqXHR.responseText)
+                            } else if (jqXHR.status === 500) {
+                                alert(jqXHR.responseText)
                             }
                         }
                     });
