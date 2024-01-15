@@ -111,21 +111,23 @@
                     <h1 class="mb-4">QuickQuiz</h1>
                     <div class="form-floating mb-3">
                         <input type="text" name="name" class="form-control" id="name" placeholder="" autocomplete="off" required>
-                        <label for="name">Name</label>
+                        <label for="name">Name*</label>
                     </div>
 
                     <div class="form-floating mb-3">
                         <input type="email" name="email" class="form-control" id="email" placeholder="" autocomplete="off" required>
-                        <label for="email">Email</label>
+                        <label for="email">Email*</label>
+                        <span class="float-start ms-3 mb-3" id="emailDuplicateLabel" style="display:none; color: red;font-size: 13px">Duplicate Field</span>
                     </div>
 
                     <div class="form-floating mb-3">
                         <input type="text" name="username" class="form-control" id="username" placeholder="" autocomplete="off" required>
-                        <label for="username">Username</label>
+                        <label for="username">Username*</label>
+                        <span class="float-start ms-3 mb-3" id="usernameDuplicateLabel" style="display:none; color: red;font-size: 13px">username already taken by someone!</span><br>
                     </div>
 
                     <div class="gender mb-3">
-                        <label>Gender</label> &nbsp; &nbsp; &nbsp;
+                        <label>Gender*</label> &nbsp; &nbsp; &nbsp;
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="gender" id="male" value="Male">
                             <label class="form-check-label" for="male">Male</label>
@@ -145,13 +147,13 @@
                     <div class="form-floating mb-3">
                         <input type="password" name="password" class="form-control" id="password" placeholder="" autocomplete="off"
                                required>
-                        <label for="password">Create Password</label>
+                        <label for="password">Create Password*</label>
                     </div>
 
                     <div class="form-floating mb-3">
                         <input type="password" name="confirm_password" class="form-control" id="confirm_password" placeholder="" autocomplete="off"
                                required>
-                        <label for="confirm_password">Repeat Password</label>
+                        <label for="confirm_password">Repeat Password*</label>
                     </div>
 
                     <div class="d-grid gap-2">
@@ -258,7 +260,22 @@
                             }
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
-                            if (jqXHR.status === 400) {
+                            if (jqXHR.status === 11000) {
+                                if (jqXHR.responseText === "email") {
+                                    $('#email').css('border', '2px solid red');
+                                    $('#emailDuplicateLabel').css('display', 'flex')
+                                } else {
+                                    $('#email').css('border', '');
+                                    $('#emailDuplicateLabel').css('display', 'none')
+                                }
+                                if (jqXHR.responseText === "username") {
+                                    $('#username').css('border', '2px solid red');
+                                    $('#usernameDuplicateLabel').css('display', 'flex')
+                                } else {
+                                    $('#username').css('border', '');
+                                    $('#usernameDuplicateLabel').css('display', 'none')
+                                }
+                            } else if (jqXHR.status === 400) {
                                 alert(jqXHR.responseText);
                             } else if (jqXHR.status === 500) {
                                 alert(jqXHR.responseText);

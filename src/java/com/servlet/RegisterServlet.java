@@ -3,6 +3,7 @@ package com.servlet;
 import com.mongodb.DatabaseConnector;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.*;
+import com.mongodb.client.model.IndexOptions;
 import com.mongodb.userSchema;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -24,6 +25,9 @@ public class RegisterServlet extends HttpServlet {
             MongoDatabase database = DatabaseConnector.getDatabase();
             MongoCollection<Document> users = database.getCollection("user");
 
+            users.createIndex(new Document("email", 1), new IndexOptions().unique(true));
+            users.createIndex(new Document("username", 1), new IndexOptions().unique(true));
+
             userSchema newUser = new userSchema();
             newUser.setName(name);
             newUser.setEmail(email);
@@ -43,8 +47,20 @@ public class RegisterServlet extends HttpServlet {
                 resp.setStatus(HttpServletResponse.SC_OK);
                 resp.getWriter().write("Registered Successfully");
             } catch (MongoWriteException e) {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.getWriter().write("Error during document insertion: " + e.getMessage());
+                if (e.getCode() == 11000) {
+                    //Duplicate handling
+                    String errorMessage = e.getMessage();
+                    int startIdx = errorMessage.indexOf("dup key: {") + "dup key: {".length();
+                    int endIdx = errorMessage.indexOf("}", startIdx);
+                    String details = errorMessage.substring(startIdx, endIdx);
+                    String[] detailsArray = details.split(":");
+                    resp.setStatus(e.getCode());
+                    resp.getWriter().write(detailsArray[0].trim());
+                } else {
+                    resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    resp.getWriter().write("Error during document insertion: " + e.getMessage());
+                }
+
             } catch (Exception e) {
                 resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 resp.getWriter().write("Unexpected error during document insertion: " + e.getMessage());
