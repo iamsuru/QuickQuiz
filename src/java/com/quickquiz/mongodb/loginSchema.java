@@ -1,4 +1,4 @@
-package com.mongodb;
+package com.quickquiz.mongodb;
 
 public class loginSchema {
     private String name;

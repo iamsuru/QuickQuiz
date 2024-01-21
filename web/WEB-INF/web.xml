@@ -2,36 +2,62 @@
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
     <display-name>QuickQuiz</display-name>
     <servlet-mapping>
-        <servlet-name>LoginServlet</servlet-name>
-        <url-pattern>/LoginServlet</url-pattern>
+        <servlet-name>FetchCategoryFromDatabase</servlet-name>
+        <url-pattern>/FetchCategoryFromDatabase</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>Index.jsp</welcome-file>
     </welcome-file-list>
+    <!--Logout Servlet-->
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>com.quickquiz.servlets.LogoutServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>FetchCategoryFromDatabase</servlet-name>
+        <servlet-class>com.quickquiz.helper.FetchCategoryFromDatabase</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/LogoutServlet</url-pattern>
+    </servlet-mapping>
+    <!--    SetCategory Servlet-->
+    <servlet>
+        <servlet-name>SetCategoryServlet</servlet-name>
+        <servlet-class>com.quickquiz.servlets.SetCategoryServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SetCategoryServlet</servlet-name>
+        <url-pattern>/SetCategoryServlet</url-pattern>
+    </servlet-mapping>
+    <!--Login Servlet-->
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>com.quickquiz.servlets.LoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/LoginServlet</url-pattern>
+    </servlet-mapping>
+    <!--Home Panel Servlet-->
     <servlet>
         <servlet-name>HomePanel</servlet-name>
         <jsp-file>/HomePanel.jsp</jsp-file>
     </servlet>
-    <servlet>
-        <servlet-name>LoginServlet</servlet-name>
-        <servlet-class>com.servlet.LoginServlet</servlet-class>
-    </servlet>
-    
+    <servlet-mapping>
+        <servlet-name>HomePanel</servlet-name>
+        <url-pattern>/home-panel</url-pattern>
+    </servlet-mapping>
+    <!--Register Servlet-->
     <servlet>
         <servlet-name>RegisterServlet</servlet-name>
-        <servlet-class>com.servlet.RegisterServlet</servlet-class>
+        <servlet-class>com.quickquiz.servlets.RegisterServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>RegisterServlet</servlet-name>
         <url-pattern>/RegisterServlet</url-pattern>
     </servlet-mapping>
-    
-    
-    
-    <servlet-mapping>
-        <servlet-name>HomePanel</servlet-name>
-        <url-pattern>/home-panel</url-pattern>
-    </servlet-mapping>
+    <!--Registration Page-->
     <servlet>
         <servlet-name>Registration</servlet-name>
         <jsp-file>/Registration.jsp</jsp-file>
@@ -41,5 +67,3 @@
         <url-pattern>/registration</url-pattern>
     </servlet-mapping>
 </web-app>
-
-

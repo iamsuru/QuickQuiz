@@ -1,4 +1,4 @@
-package com.mongodb;
+package com.quickquiz.mongodb;
 
 import org.bson.types.ObjectId;
 
