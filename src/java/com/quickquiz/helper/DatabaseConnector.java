@@ -49,5 +49,6 @@ public class DatabaseConnector {
 //
     public static void closeConnection() {
         mongoClient.close();
+        mongoClient = null;
     }
 }

@@ -30,7 +30,7 @@
             </div>
         </div>
 
-        <div class="container flex-container">
+       <div class="container flex-container">
             <%@include file="Preview.jsp" %>
             <div class="container form-container">
                 <form id="LoginForm" method="post" action="LoginServlet">
