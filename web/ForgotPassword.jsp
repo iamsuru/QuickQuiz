@@ -1,13 +1,14 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
+<html lang="en">
+
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Change Password</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>QuickQuiz</title>
+        <link rel="stylesheet" href="./stylesheet/bootstrap.css">
+        <link href="stylesheet/index.css" rel="stylesheet" type="text/css"/>
         <link rel="shortcut icon" href="./images/favicon.png" type="image/x-icon">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <link href="stylesheet/bootstrap.css" rel="stylesheet" type="text/css"/>
-        <link href="stylesheet/index.css" rel="stylesheet" type="text/css"/>
     </head>
     <body>
         <%@include file="Navbar.jsp" %>
