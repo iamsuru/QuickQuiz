@@ -1,13 +1,13 @@
 body {
-    background-color: rgb(25, 24, 51) !important;
+    background-color: rgb(25, 24, 51);
     color: #fff;
 }
 
-img{
+img {
     width: 200px;
-    height:200px;
+    height: 200px;
 }
 
-a{
-    width: 150px;
+span{
+    font-size: 30px;
 }

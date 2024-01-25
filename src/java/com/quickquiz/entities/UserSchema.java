@@ -5,6 +5,11 @@ import org.bson.types.ObjectId;
 
 public class UserSchema {
 
+    public UserSchema(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
     public UserSchema(String name, String email, String username, String gender, String password, LocalDateTime current) {
         this.name = name;
         this.email = email;

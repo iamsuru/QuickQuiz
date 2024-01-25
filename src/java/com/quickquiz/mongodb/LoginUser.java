@@ -16,12 +16,13 @@ import org.mindrot.jbcrypt.BCrypt;
 public class LoginUser {
 
     private MongoDatabase database;
+    private Document foundUser = null;
 
     public LoginUser(MongoDatabase database) {
         this.database = database;
     }
 
-    public void doAuthentication(String identifier, String password, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public Document doAuthentication(String identifier, String password, HttpServletRequest req, HttpServletResponse resp) throws IOException {
         UserSchema currentUser = null;
         if (database != null) {
             try {
@@ -37,31 +38,19 @@ public class LoginUser {
                 MongoCursor<Document> usernameAuth = usernameIterable.iterator();
 
                 if (emailAuth.hasNext() || usernameAuth.hasNext()) {
-                    Document foundUser = emailAuth.hasNext() ? emailAuth.next() : usernameAuth.next();
+                    foundUser = emailAuth.hasNext() ? emailAuth.next() : usernameAuth.next();
                     String storedPassword = foundUser.getString("password");
                     if (BCrypt.checkpw(password, storedPassword)) {
-                        resp.setStatus(HttpServletResponse.SC_OK);
-                        //getting details
-                        currentUser = new UserSchema();
-
-                        currentUser.setName(foundUser.getString("name"));
-                        currentUser.setEmail(foundUser.getString("email"));
-                        currentUser.setUsername(foundUser.getString("username"));
-                        currentUser.setGender(foundUser.getString("gender"));
-
-                        if (currentUser != null) {
-//                            ScoreCollection(currentUser, req, resp);
-                            HttpSession session = req.getSession();
-                            session.setAttribute("currentUser", currentUser);
-                        }
-                        resp.getWriter().write("Login successful. Welcome, " + currentUser.getName() + "!");
+                        return foundUser;
                     } else {
                         resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                         resp.getWriter().write("Invalid Credentials.");
+                        return null;
                     }
                 } else {
                     resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
                     resp.getWriter().write("User does not exist.");
+                    return foundUser;
                 }
             } catch (Exception e) {
                 resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -70,21 +59,26 @@ public class LoginUser {
         } else {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write("Error connecting to the database. Please try again later.");
+            return foundUser;
         }
+        return foundUser;
     }
 
-    private void ScoreCollection(UserSchema currentUser, HttpServletRequest req, HttpServletResponse resp) {
+    public void ScoreCollection(UserSchema currentUser, HttpServletRequest req) {
         MongoCollection<Document> scores = database.getCollection("scores");
         Document username = new Document("username", currentUser.getUsername());
         FindIterable<Document> usernameIterable = scores.find(username);
         MongoCursor<Document> usernameCursor = usernameIterable.iterator();
-        
-        if(usernameCursor.hasNext()){
+
+        if (usernameCursor.hasNext()) {
             Document foundUser = usernameCursor.next();
             Scores currentUserScore = new Scores();
             currentUserScore.setHighest_score(foundUser.getInteger("highest_score"));
             currentUserScore.setPrevious_score(foundUser.getInteger("previous_score"));
             currentUserScore.setUsername(foundUser.getString("username"));
+            System.out.println(currentUserScore.getUsername() + " " + currentUserScore.getPrevious_score() + " " + currentUserScore.getHighest_score());
+            HttpSession session = req.getSession();
+            session.setAttribute("userScore", currentUserScore);
         }
     }
 }

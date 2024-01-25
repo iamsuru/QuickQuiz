@@ -20,16 +20,34 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-//        try {
-//            Thread.sleep(5000);
-//        } catch (InterruptedException ex) {
-//            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
         String identifier = req.getParameter("loginIdentifier");
         String password = req.getParameter("password");
 
         LoginUser user = new LoginUser(DatabaseConnector.makeConnection());
 
-        user.doAuthentication(identifier, password, req, resp);
+        Document foundUser = user.doAuthentication(identifier, password, req, resp);
+        if (foundUser != null) {
+            resp.setStatus(HttpServletResponse.SC_OK);
+            //getting details
+            UserSchema currentUser = new UserSchema();
+
+            currentUser.setName(foundUser.getString("name"));
+            currentUser.setEmail(foundUser.getString("email"));
+            currentUser.setUsername(foundUser.getString("username"));
+            currentUser.setGender(foundUser.getString("gender"));
+
+            if (currentUser != null) {
+                //collectiong scores
+                user.ScoreCollection(currentUser, req);
+                HttpSession session = req.getSession();
+                session.setAttribute("currentUser", currentUser);
+            }
+            resp.getWriter().write("Login successful. Welcome, " + currentUser.getName() + "!");
+        }
     }
 }

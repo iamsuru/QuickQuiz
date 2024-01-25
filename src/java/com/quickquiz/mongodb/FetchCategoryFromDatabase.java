@@ -1,31 +1,23 @@
-package com.quickquiz.helper;
+package com.quickquiz.mongodb;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import java.io.*;
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
+import com.quickquiz.helper.DatabaseConnector;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.bson.Document;
 
-public class FetchCategoryFromDatabase extends HttpServlet {
+public class FetchCategoryFromDatabase {
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String collectionName = req.getParameter("categoryChoice");
-        collectionName = collectionName.toLowerCase();
-        System.out.println(collectionName);
-        List<Document> category = getQuizDataFromMongoDB(collectionName);
+    private MongoDatabase database;
 
-        String categoryJSON = convertListToJSON(category);
-        resp.setContentType("application/json");
-        resp.getWriter().write(categoryJSON);
+    public FetchCategoryFromDatabase(MongoDatabase database) {
+        this.database = database;
     }
 
-    private List<Document> getQuizDataFromMongoDB(String collectionName) {
+    public List<Document> getQuizDataFromMongoDB(String collectionName) {
         List<Document> quizDataList = new ArrayList<>();
 
         MongoDatabase database = DatabaseConnector.makeConnection();
@@ -36,15 +28,12 @@ public class FetchCategoryFromDatabase extends HttpServlet {
 
         while (it.hasNext()) {
             Document document = it.next();
-//            System.out.println(document);
             quizDataList.add(document);
         }
-//        System.out.println(quizDataList);
-
         return quizDataList;
     }
 
-    private String convertListToJSON(List<Document> category) {
+    public String convertListToJSON(List<Document> category) {
         System.out.println(category);
         StringBuilder jsonBuilder = new StringBuilder("[");
         for (Document d : category) {
@@ -56,4 +45,5 @@ public class FetchCategoryFromDatabase extends HttpServlet {
         jsonBuilder.append("]");
         return jsonBuilder.toString();
     }
+
 }

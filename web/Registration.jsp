@@ -10,6 +10,7 @@
         <title>Registration - QuickQuiz</title>
         <link rel="stylesheet" href="./stylesheet/bootstrap.css">
         <link href="stylesheet/registration.css" rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     </head>
 
     <body>
@@ -18,7 +19,7 @@
         <div id="fullScreenLoader" class="full-screen-loader">
             <div class="text-center">
                 <span class="loader"></span>
-                <p id="paragraph"></p>
+                <p id="paragraph" style="color: #fff;">Getting things ready!<br>Have patience...</p>
             </div>
         </div>
 
@@ -73,7 +74,7 @@
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button class="btn btn-outline-success submit-btn" type="submit">Register yourself</button>
+                        <button class="btn btn-outline-success submit-btn" type="submit">Register yourself<i style="margin-left: 5px;" class="fa fa-user-plus"></i></button>
                     </div>
                 </form>
             </div>
@@ -86,135 +87,8 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
                 integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
         crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <!--<script src="scripts/registration.js" type="text/javascript"></script>-->
-        <script>
-            $(document).ready(function () {
-                function checkPasswordEquality() {
-                    var password = $('#password').val();
-                    var confirmPassword = $('#confirm_password').val();
-
-                    if (password !== confirmPassword) {
-                        // Passwords do not match, add red border to confirm password field
-                        $('#confirm_password').css('border', '2px solid red');
-                    } else {
-                        // Passwords match, remove red border from confirm password field
-                        $('#confirm_password').css('border', '2px solid green');
-                    }
-                }
-                $('#confirm_password').on('input', checkPasswordEquality);
-
-                $('#registrationForm').submit(function (event) {
-                    event.preventDefault();
-                    $('#fullScreenLoader').css('display', 'flex');
-                    let formData = $(this).serialize();
-                    $.ajax({
-                        type: 'POST',
-                        url: "RegisterServlet",
-                        data: formData,
-                        success: function (data, textStatus, jqXHR) {
-                            $('#fullScreenLoader').css('display', 'none');
-                            if (jqXHR.status === 200) {
-                                let timerInterval;
-                                Swal.fire({
-                                    position: "center",
-                                    icon: "success",
-                                    showConfirmButton: false,
-                                    text: data,
-                                    timer: 5000,
-                                    didOpen: () => {
-                                        timerInterval = setInterval(() => {
-                                        }, 100);
-                                    },
-                                    willClose: () => {
-                                        clearInterval(timerInterval);
-                                    }
-                                }).then((result) => {
-                                    if (result.dismiss === Swal.DismissReason.timer) {
-                                        $('#paragraph').text("Redirecting...");
-                                        $('#fullScreenLoader').css('display', 'flex');
-                                        setTimeout(function () {
-                                            $('#fullScreenLoader').css('display', 'none');
-                                            $('#paragraph').text("");
-                                            window.location = "/QuickQuiz";
-                                        }, 3000);
-                                    }
-                                })
-                            } else {
-                                let timerInterval;
-                                Swal.fire({
-                                    position: "center",
-                                    icon: "error",
-                                    showConfirmButton: false,
-                                    text: data,
-                                    timer: 5000,
-                                    didOpen: () => {
-                                        timerInterval = setInterval(() => {
-
-                                        }, 100);
-                                    },
-                                    willClose: () => {
-                                        clearInterval(timerInterval);
-                                    }
-                                })
-                            }
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            $('#fullScreenLoader').css('display', 'none');
-                            if (jqXHR.status === 11000) {
-                                if (jqXHR.responseText === "email") {
-                                    $('#email').css('border', '2px solid red');
-                                    $('#emailDuplicateLabel').css('display', 'flex')
-                                } else {
-                                    $('#email').css('border', '');
-                                    $('#emailDuplicateLabel').css('display', 'none')
-                                }
-                                if (jqXHR.responseText === "username") {
-                                    $('#username').css('border', '2px solid red');
-                                    $('#usernameDuplicateLabel').css('display', 'flex')
-                                } else {
-                                    $('#username').css('border', '');
-                                    $('#usernameDuplicateLabel').css('display', 'none')
-                                }
-                            } else if (jqXHR.status === 400) {
-                                let timerInterval;
-                                Swal.fire({
-                                    position: "center",
-                                    icon: "error",
-                                    showConfirmButton: false,
-                                    text: jqXHR.responseText,
-                                    timer: 5000,
-                                    didOpen: () => {
-                                        timerInterval = setInterval(() => {
-
-                                        }, 100);
-                                    },
-                                    willClose: () => {
-                                        clearInterval(timerInterval);
-                                    }
-                                })
-                            } else if (jqXHR.status === 500) {
-                                let timerInterval;
-                                Swal.fire({
-                                    position: "center",
-                                    icon: "error",
-                                    showConfirmButton: false,
-                                    text: jqXHR.responseText,
-                                    timer: 5000,
-                                    didOpen: () => {
-                                        timerInterval = setInterval(() => {
-                                        }, 100);
-                                    },
-                                    willClose: () => {
-                                        clearInterval(timerInterval);
-                                    }
-                                })
-                            }
-                        }
-                    })
-                })
-            })
-        </script>
+        <script src="scripts/sweet-alert.js" type="text/javascript"></script>
+        <script src="scripts/registration.js" type="text/javascript"></script>
     </body>
 
 </html>

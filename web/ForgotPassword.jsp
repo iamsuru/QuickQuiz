@@ -1,55 +1,51 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page errorPage="ErrorPage.jsp"%>
-<%@page import="com.quickquiz.entities.UserSchema" %>
-<%
-    UserSchema currentUser = (UserSchema)session.getAttribute("currentUser");
-    if(currentUser != null){
-        response.sendRedirect("home-panel");
-    }
-%>
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>QuickQuiz</title>
-        <link rel="stylesheet" href="./stylesheet/bootstrap.css">
-        <link href="stylesheet/index.css" rel="stylesheet" type="text/css"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Change Password</title>
         <link rel="shortcut icon" href="./images/favicon.png" type="image/x-icon">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link href="stylesheet/bootstrap.css" rel="stylesheet" type="text/css"/>
+        <link href="stylesheet/index.css" rel="stylesheet" type="text/css"/>
     </head>
-
     <body>
         <%@include file="Navbar.jsp" %>
 
         <div id="fullScreenLoader" class="full-screen-loader">
             <div class="text-center">
                 <span class="loader"></span>
-                <p id="paragraph">Getting things ready!<br>Have patience...</p>
+                <p id="paragraph"></p>
             </div>
         </div>
 
-        <div class="container flex-container">
+        <div style="margin-top: 40px !important;" class="container flex-container">
             <%@include file="Preview.jsp" %>
             <div class="container form-container">
-                <form id="LoginForm" method="post" action="LoginServlet">
+                <form id="forgotPasswordForm" method="post" action="ForgotPasswordServlet">
                     <div class="form-floating mb-3">
-                        <input type="text" name="loginIdentifier" class="form-control" id="email" placeholder="" autocomplete="off" required="true">
-                        <label for="email">Email or Username</label>
+                        <input type="email" name="email" class="form-control" id="email" placeholder="" autocomplete="off" required="true">
+                        <label for="email">Email*</label>
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input type="password" name="password" class="form-control" id="password" placeholder="" autocomplete="off" required="true">
-                        <label for="password">Password</label>
+                        <input type="password" name="password" class="form-control" id="password" placeholder="" autocomplete="off"
+                               required>
+                        <label for="password">New Password*</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="password" name="confirm_password" class="form-control" id="confirm_password" placeholder="" autocomplete="off"
+                               required>
+                        <label for="confirm_password">Repeat Password*</label>
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button class="btn btn-outline-primary submit-btn" type="submit">Login<i style="margin-left: 5px;" class="fa-solid fa-circle-user"></i></button>
+                        <button class="btn btn-outline-success submit-btn" type="submit">Change Password<i style="margin-left: 5px;" class="fa fa-key"></i></button>
                     </div>
 
                     <div class="mt-3 forgot">
-                        <a style="color:blue;" href="forgot-password">Forgot Password?</a>
+                        <a style="color:blue;" href="#">Forgot Password?</a>
                         <hr style="height:2px; width:auto; border-width:0;background-color:rgb(255, 255, 255)">
                     </div>
                 </form>
@@ -64,7 +60,6 @@
                 integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
         crossorigin="anonymous"></script>
         <script src="scripts/sweet-alert.js" type="text/javascript"></script>
-        <script src="scripts/index.js" type="text/javascript"></script>
+        <script src="scripts/forgot_password.js" type="text/javascript"></script>
     </body>
-
 </html>

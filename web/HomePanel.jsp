@@ -1,9 +1,14 @@
 <%@page import="com.quickquiz.entities.UserSchema" %>
+<%@page import="com.quickquiz.entities.Scores" %>
+<%@page errorPage="error" %>
 <%
     UserSchema user = (UserSchema)session.getAttribute("currentUser");
     if(user==null){
         response.sendRedirect("/QuickQuiz");
+        return;
     }
+    Scores currentUserScore = (Scores)session.getAttribute("userScore");
+    System.out.println("jsp " + currentUserScore.getUsername()+ " " + currentUserScore.getPrevious_score() + " " + currentUserScore.getHighest_score());
 %>
 
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
@@ -17,6 +22,7 @@
         <link rel="shortcut icon" href="./images/favicon.png" type="image/x-icon">
         <link rel="stylesheet" href="./stylesheet/bootstrap.css">
         <link href="stylesheet/homepanel.css" rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     </head>
 
 
@@ -35,15 +41,20 @@
                     </button>
                     <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
                         <div class="navbar-nav">
-                            <a class="nav-link active" aria-current="page" href="home-panel">Home</a>
-                            <a class="nav-link active" aria-current="page"><%= user.getUsername()%></a>
-                            <a class="nav-link active" aria-current="page" href="LogoutServlet">Sign out</a>
+                            <a class="nav-link active" aria-current="page" href="home-panel"><i style="margin-right: 5px" class="fa-solid fa-house-user"></i>Home</a>
+                            <a class="nav-link active" aria-current="page" id="currentUsername"><i style="margin-right: 5px" class="fa-solid fa-circle-user"></i><%= user.getUsername()%></a>
+                            <a class="nav-link active" aria-current="page" href="LogoutServlet"><i style="margin-right: 5px" class="fa fa-sign-out"></i>Sign out</a>
                         </div>
                     </div>
                 </div>
             </nav>
         </header>
-
+        <div id="fullScreenLoader" class="full-screen-loader">
+            <div class="text-center">
+                <span class="loader"></span>
+                <p id="paragraph" style="color: #fff;">Getting things ready!<br>Have patience...</p>
+            </div>
+        </div>
         <main>
             <div class="container category mt-5 mb-5">
                 <div class="row">
@@ -135,13 +146,15 @@
                 </div>
                 <div class="info-list d-flex flex-column align-items-center">
                     <div class="info">
-                        <h5 style="color: green;">Highest Score <span></span></h5>
+                        <h5 style="color: green;">Highest Score <span id="highestScore"><%= currentUserScore.getHighest_score()%></span>
+                            <sup id="sup" class="d-none" style="font-size: 15px; background-clip: text; color: transparent; background-image: linear-gradient(to right, yellow, red); display: inline;">(Updated!)</sup>
+                        </h5>
                     </div>
                     <div class="info">
                         <h5 style="color: #E99506;">Current Score <span id="currentScore"></span></h5>
                     </div>
                     <div class="info">
-                        <h5 style="color: red;">Previous Score <span></span></h5>
+                        <h5 style="color: red;">Previous Score <span id="previousScore"><%= currentUserScore.getPrevious_score()%></span></h5>
                     </div>
                 </div>
                 <div class="buttons">
@@ -158,6 +171,7 @@
                 integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
         crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="scripts/sweet-alert.js" type="text/javascript"></script>
         <script src="scripts/home-panel.js" type="text/javascript"></script>
     </body>
 

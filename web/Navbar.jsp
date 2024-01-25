@@ -1,5 +1,5 @@
 <header>
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-sm">
         <div class="container">
             <a class="navbar-brand" href="/QuickQuiz">
                 <h1>QuickQuiz</h1>
@@ -11,9 +11,9 @@
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-link active" aria-current="page" href="home-panel">Home</a>
-                    <a class="nav-link active" aria-current="page" href="registration">Registration</a>
-                    <a class="nav-link active" aria-current="page" href="/QuickQuiz">Sign in</a>
+                    <a class="nav-link active" aria-current="page" href="home-panel"><i style="margin-right: 5px" class="fa-solid fa-house-user"></i>Home</a>
+                    <a class="nav-link active" aria-current="page" href="registration"><i style="margin-right: 5px" class="fa fa-user-plus"></i>Registration</a>
+                    <a class="nav-link active" aria-current="page" href="/QuickQuiz"><i style="margin-right: 5px" class="fa fa-sign-in"></i>Sign in</a>
                 </div>
             </div>
         </div>

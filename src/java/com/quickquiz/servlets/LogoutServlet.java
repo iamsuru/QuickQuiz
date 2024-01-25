@@ -4,6 +4,7 @@
  */
 package com.quickquiz.servlets;
 
+import com.quickquiz.helper.DatabaseConnector;
 import java.io.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
@@ -21,10 +22,12 @@ public class LogoutServlet extends HttpServlet {
             out.println("<title>Servlet LogoutServlet</title>");
             out.println("</head>");
             out.println("<body>");
+
             HttpSession session = request.getSession();
             session.removeAttribute("currentUser");
-
+            DatabaseConnector.closeConnection();
             response.sendRedirect("/QuickQuiz");
+
             out.println("<h1>Servlet LogoutServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
@@ -47,5 +50,4 @@ public class LogoutServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }
-
 }

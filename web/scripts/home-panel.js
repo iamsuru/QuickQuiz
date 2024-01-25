@@ -12,8 +12,14 @@ let updateIdx;
 let score = 0;
 let current_ques = 0;
 let total_ques = 5;
+
+let previousScore = Number($('#previousScore').text());
+let highestScore = Number($('#highestScore').text());
+let username = $('#currentUsername').text();
+
 jQuery.onload = () => {
-    console.log('on')
+    $('#fullScreenLoader').css('display', 'none');
+    $('#paragraph').text("");
     //info box elements
     const info_box = $('.info_box')
     const exitBtn = $('#exitBtn')
@@ -35,47 +41,67 @@ jQuery.onload = () => {
 
 
     btnn.click(function () {
+        $('#paragraph').text("Creating Quiz Ready...").append("<br>Please Wait")
+        $('#fullScreenLoader').css('display', 'flex');
         let categoryChoice = $(this).text();
-        console.log(categoryChoice);
         $.ajax({
-            url: "FetchCategoryFromDatabase",
+            url: "FetchCategoryFromDatabaseServlet",
             type: 'POST',
             data: {categoryChoice: categoryChoice},
             success: function (response) {
+                setTimeout(function () {
+                    info_box.addClass('activeInfo');
+                    category.css('display', 'none')
+                    main_display.css('display', 'flex');
+                    $('#fullScreenLoader').css('display', 'none');
+                    $('#paragraph').text("");
+                }, 5000);
                 dataSet = response;
                 displayQuestion(response[getIndex()]);
             },
             error: function (error) {
+                $('#fullScreenLoader').css('display', 'none');
+                $('#paragraph').text("");
                 console.error(error);
             }
         })
-
-        info_box.addClass('activeInfo');
-        category.css('display', 'none')
-        main_display.css('display', 'flex');
 
     });
 
 
     exitBtn.click(() => {
-        info_box.removeClass('activeInfo');
-        category.css('display', 'flex')
-        main_display.css('display', 'none');
+        $('#fullScreenLoader').css('display', 'flex');
+        $('#paragraph').text('Please Wait.').append("<br>Redirecting Back...");
+        setTimeout(function () {
+            $('#fullScreenLoader').css('display', 'none');
+            $('#paragraph').text("");
+            info_box.removeClass('activeInfo');
+            category.css('display', 'flex')
+            main_display.css('display', 'none');
+        }, 2000);
+
     })
 
 
     hideRuleBoxBtn.click(() => {
-        info_box.removeClass('activeInfo');
-        startTimer();
+        $('#fullScreenLoader').css('display', 'flex');
+        $('#paragraph').text('Please Wait.');
+        setTimeout(function () {
+            $('#fullScreenLoader').css('display', 'none');
+            $('#paragraph').text("");
+            info_box.removeClass('activeInfo');
+            startTimer();
+        }, 2000);
+
     })
 
     btnToHomePanel.click(() => {
-        window.location.href = 'home-panel'
+        updateScore(score, previousScore, highestScore, username);
     })
 }
 
 startTimer = () => {
-    let timeLeft = 11;
+    let timeLeft = 30;
     $('#countDown').text(`Timer - ${timeLeft}s remaining`)
 
     timer = setInterval(() => {
@@ -91,15 +117,22 @@ startTimer = () => {
         } else {
             clearInterval(timer)
             $('#countDown').html(`Time's Up!<br>Wait for the result`)
-            setTimeout(showScore, 3000);
+            $('.options-btn').prop('disabled', true);
+            setTimeout(function () {
+                showScore();
+            }, 1000);
         }
     }, 1000);
 }
 
 showScore = () => {
+    if (score > highestScore) {
+        $('#sup').css('display', 'flex');
+        $('#highestScore').text(score);
+    }
+//    updateScore(score, previousScore, highestScore, username);
     showResult.addClass('activeInfo');
     main_display.css('display', 'none');
-    console.log('final score ', score);
     $('#currentScore').text(score);
 }
 
@@ -111,15 +144,17 @@ function getIndex() {
     } while (usedIndex.includes(idx));
 
     usedIndex.push(idx);
-    console.log(usedIndex);
     return idx;
 }
 
 function displayQuestion(questionData) {
     $('#question').text(questionData.question);
 
-    for (let i = 0; i < questionData.choices.length && i < 4; i++) {
-        $(`#btn${i}`).text(questionData.choices[i]);
+    let shuffledChoices = [...questionData.choices];
+    shuffleChoices(shuffledChoices);
+
+    for (let i = 0; i < shuffledChoices.length && i < 4; i++) {
+        $(`#btn${i}`).text(shuffledChoices[i]);
         // Attach a click event to each button
         $(`#btn${i}`).off('click').on('click', function () {
             let selectedAnswer = $(this).text();
@@ -131,29 +166,79 @@ function displayQuestion(questionData) {
     }
 }
 
+function shuffleChoices(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
 function checkCorrectAndUpdate(selectedAnswer, correct_answer, selectedButton) {
     current_ques = current_ques + 1;
 
     if (selectedAnswer === correct_answer) {
         selectedButton.css('background-color', 'green');
         score = score + 10;
-        console.log(score);
     } else {
         selectedButton.css('background-color', 'red');
-        console.log(score);
     }
 
     if (current_ques < total_ques) {
         setTimeout(function () {
             selectedButton.css('background-color', '#3a90df');
             displayQuestion(dataSet[getIndex()]);
-        }, 1000);
+        }, 500);
     } else {
         $('.options-btn').prop('disabled', true);
         clearInterval(timer);
         setTimeout(function () {
             selectedButton.css('background-color', '#3a90df');
             showScore();
-        }, 1000);
+        }, 500);
     }
+}
+
+function updateScore(score, previousScore, highestScore, username) {
+    $('#fullScreenLoader').css('display', 'flex');
+    $('#paragraph').text('Updating Score').append('<br>Have Patience...');
+    previousScore = score;
+    var formData = new FormData();
+    formData.append('score', score);
+    formData.append('previousScore', previousScore);
+    formData.append('highestScore', highestScore);
+    formData.append('username', username)
+    $.ajax({
+        url: "UpdateScoreServlet",
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (response) {
+            setTimeout(function () {
+                $('#fullScreenLoader').css('display', 'none');
+                $('#paragraph').text("");
+                window.location = 'home-panel'
+            }, 5000);
+        },
+        error: function (error) {
+            $('#fullScreenLoader').css('display', 'none');
+            $('#paragraph').text("");
+            let timerInterval;
+            Swal.fire({
+                position: "center",
+                icon: "error",
+                showConfirmButton: false,
+                text: error,
+                timer: 3000,
+                didOpen: () => {
+                    timerInterval = setInterval(() => {
+
+                    }, 100);
+                },
+                willClose: () => {
+                    clearInterval(timerInterval);
+                }
+            })
+        }
+    })
 }

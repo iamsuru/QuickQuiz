@@ -3,10 +3,12 @@ package com.quickquiz.servlets;
 import com.mongodb.client.MongoDatabase;
 import com.quickquiz.entities.UserSchema;
 import com.quickquiz.helper.DatabaseConnector;
+import com.quickquiz.helper.PasswordValidator;
 import com.quickquiz.mongodb.RegisterUser;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.*;
+import java.util.regex.*;
 import java.time.LocalDateTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,9 +18,9 @@ public class RegisterServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        
+
         try {
-            Thread.sleep(5000);
+            Thread.sleep(3000);
         } catch (InterruptedException ex) {
             Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -27,13 +29,18 @@ public class RegisterServlet extends HttpServlet {
         String username = req.getParameter("username");
         String gender = req.getParameter("gender");
         String password = req.getParameter("password");
-        String salt = BCrypt.gensalt();
-        String hashPassword = BCrypt.hashpw(password, salt);
 
-        UserSchema newUser = new UserSchema(name, email, username, gender, hashPassword, LocalDateTime.now());
+        PasswordValidator validator = new PasswordValidator();
+        if (validator.isValidPassword(password, resp)) {
+            String salt = BCrypt.gensalt();
+            String hashPassword = BCrypt.hashpw(password, salt);
 
-        RegisterUser user = new RegisterUser(DatabaseConnector.makeConnection());
+            UserSchema newUser = new UserSchema(name, email, username, gender, hashPassword, LocalDateTime.now());
 
-        user.registerUser(newUser, resp);
+            RegisterUser user = new RegisterUser(DatabaseConnector.makeConnection());
+
+            user.registerUser(newUser, resp);
+        }
+
     }
 }

@@ -4,30 +4,18 @@ document.head.appendChild(jQuery);
 
 $(document).ready(function () {
     $('#fullScreenLoader').css('display', 'none');
-    function checkPasswordEquality() {
-        var password = $('#password').val();
-        var confirmPassword = $('#confirm_password').val();
-
-        if (password !== confirmPassword) {
-            // Passwords do not match, add red border to confirm password field
-            $('#confirm_password').css('border', '2px solid red');
-        } else {
-            // Passwords match, remove red border from confirm password field
-            $('#confirm_password').css('border', '2px solid green');
-        }
-    }
-    $('#confirm_password').on('input', checkPasswordEquality);
-
-    $('#registrationForm').submit(function (event) {
+    $('#LoginForm').submit(function (event) {
         event.preventDefault();
         $('#paragraph').text("");
         $('#fullScreenLoader').css('display', 'flex');
-        let formData = $(this).serialize();
+
+        var formData = $(this).serialize(); // Serialize form data
         $.ajax({
             type: 'POST',
-            url: "RegisterServlet",
+            url: 'LoginServlet',
             data: formData,
             success: function (data, textStatus, jqXHR) {
+                $('#fullScreenLoader').css('display', 'none');
                 if (jqXHR.status === 200) {
                     let timerInterval;
                     Swal.fire({
@@ -50,8 +38,8 @@ $(document).ready(function () {
                             setTimeout(function () {
                                 $('#fullScreenLoader').css('display', 'none');
                                 $('#paragraph').text("");
-                                window.location = "/QuickQuiz";
-                            }, 3000);
+                                window.location = "home-panel";
+                            }, 1000);
                         }
                     })
                 } else {
@@ -60,37 +48,17 @@ $(document).ready(function () {
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 $('#fullScreenLoader').css('display', 'none');
-                if (jqXHR.status === 11000) {
-                    if (jqXHR.responseText === "email") {
-                        showError("email");
-                    } else {
-                        hideError("email");
-                    }
-                    if (jqXHR.responseText === "username") {
-                        showError("username");
-                    } else {
-                        hideError("username");
-                    }
-                } else if (jqXHR.status === 400) {
+                if (jqXHR.status === 401) {
                     sweetAlerts("error", jqXHR.responseText);
+                } else if (jqXHR.status === 404) {
+                    sweetAlerts("warning", jqXHR.responseText);
                 } else if (jqXHR.status === 500) {
                     sweetAlerts("error", jqXHR.responseText);
                 }
             }
-        })
-    })
-})
-
-
-function showError(inputType) {
-    $(`#${inputType}`).css('border', '2px solid red');
-    $(`#${inputType}DuplicateLabel`).css('display', 'flex');
-}
-
-function  hideError(inputType) {
-    $(`#${inputType}`).css('border', '');
-    $(`#${inputType}DuplicateLabel`).css('display', 'none')
-}
+        });
+    });
+});
 
 function sweetAlerts(icon, msg) {
     let timerInterval;
